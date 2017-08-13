@@ -7,7 +7,8 @@
 Square::Square(int i, QWidget *parent) :
     QWidget(parent),
     index(i),
-    state(""),
+    state(-1),
+    stateMarker(""),
     occupied(false)
 {
     button = new QPushButton(this);
@@ -16,7 +17,7 @@ Square::Square(int i, QWidget *parent) :
 
     QHBoxLayout* layout = new QHBoxLayout();
 
-    button->setText(state);
+    button->setText(stateMarker);
 
     layout->addWidget(button);
 

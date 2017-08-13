@@ -19,6 +19,10 @@ private:
     Board* board;
     int next; // 0: O, 1: X
     QLabel* label;
+    bool finished;
+
+    bool checkForWin(int i);
+    bool checkLines(const QVector<int> &linesToCheck);
 };
 
 #endif // WINDOW_H

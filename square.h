@@ -22,7 +22,10 @@ public slots:
 private:
     int index; // anywhere from 0 to 8
     bool occupied;  // true: if a marker was placed, false otherwise
-    QString state; // 'O', 'X', or ''
+    //QString state; // 'O', 'X', or ''
+    int state; // 0 if O, 1 if X, -1 if empty
+
+    QString stateMarker; //
 //    QLabel* state;
 };
 
