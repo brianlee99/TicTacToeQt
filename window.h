@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QLabel>
 #include "board.h"
+#include <QMap>
 
 class Window : public QWidget
 {
@@ -13,7 +14,7 @@ public:
 
 signals:
 
-public slots:
+private slots:
     void handleClick(int i);
 private:
     Board* board;
@@ -23,6 +24,9 @@ private:
 
     bool checkForWin(int i);
     bool checkLines(const QVector<int> &linesToCheck);
+
+    void handlePaint(int i, int marker);
+
 };
 
 #endif // WINDOW_H

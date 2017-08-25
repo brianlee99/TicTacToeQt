@@ -2,10 +2,8 @@
 #define SQUARE_H
 
 #include <QWidget>
-#include <QPushButton>
 
 class QLabel;
-class QPushButton;
 class QHBoxLayout;
 
 class Square : public QWidget
@@ -13,20 +11,23 @@ class Square : public QWidget
     Q_OBJECT
 public:
     explicit Square(int i, QWidget *parent = nullptr);
-    QPushButton* button;
     friend class Window;
     friend class Board;
 signals:
+    void click();
+protected:
+//    void paintEvent(QPaintEvent *e);
 
 public slots:
+    void mousePressEvent(QMouseEvent *);
+    void paintEvent(QPaintEvent *);
 private:
-    int index; // anywhere from 0 to 8
-    bool occupied;  // true: if a marker was placed, false otherwise
-    //QString state; // 'O', 'X', or ''
-    int state; // 0 if O, 1 if X, -1 if empty
-
-    QString stateMarker; //
-//    QLabel* state;
+    void setState(int next);
+    int index;
+    bool occupied;
+    int state;
+    void paintX(QPainter* painter);
+//    void paintO(QPainter* painter);
 };
 
 #endif // SQUARE_H

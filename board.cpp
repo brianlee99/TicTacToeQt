@@ -6,6 +6,8 @@ Board::Board(QWidget *parent) :
     squares(9, 0)
 {
     grid = new QGridLayout(this);
+    grid->setMargin(0);
+    grid->setSpacing(0);
 
     for (int i = 0; i < 9; i++) {
         squares[i] = new Square(i, this);
@@ -17,7 +19,7 @@ Board::Board(QWidget *parent) :
 
 
 
-    this->resize(600, 600);
+    this->setFixedSize(600, 600);
     this->setLayout(grid);
 }
 
