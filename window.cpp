@@ -14,7 +14,7 @@ Window::Window(QWidget *parent) :
 {
     board = new Board(this);
 
-    // the right 200 pixels will be for the menu
+    // allocate 200 pixels to the right for menu
     setFixedSize(800, 600);
 
     label = new QLabel("Next player: X", this);
@@ -23,8 +23,7 @@ Window::Window(QWidget *parent) :
     // X always goes first
     next = 1;
 
-    // each square will emit a distinct signal (0 to 8)
-    // and will be received by handleClick
+    // initialize signal mapping
     QSignalMapper* signalMapper = new QSignalMapper(this);
     for (int i = 0; i < 9; i++) {
         connect(board->squares[i], SIGNAL (click()), signalMapper, SLOT(map()));
@@ -34,20 +33,14 @@ Window::Window(QWidget *parent) :
 }
 
 void Window::handleClick(int i) {
-    // check for a win
     if (!finished) {
         QString currMarker = next ? "X" : "O";
         QString nextMarker = next ? "O" : "X";
-        // check that the clicked square is unoccupied
         Square* currentSquare = board->squares[i];
+        // check that the clicked square is unoccupied
         if (!currentSquare->occupied) {
-            currentSquare->occupied = true;
             currentSquare->setState(next);
             currentSquare->update();
-
-            //currentSquare->button->drawMarker(currMarker);
-            //currentSquare->update();
-            //currentSquare->button->setText(currMarker);
 
             bool won = checkForWin(i);
             if (won) {
@@ -104,9 +97,6 @@ bool Window::checkForWin(int i) {
 
 bool Window::checkLines(const QVector<int> &linesToCheck) {
     for (int lineNum : linesToCheck) {
-
-        qInfo("Line number %d", lineNum);
-
         QVector<int> positions;
 
         switch(lineNum) {
@@ -136,7 +126,7 @@ bool Window::checkLines(const QVector<int> &linesToCheck) {
                 break;
         }
 
-        // checks if there is 3 in a row for the most recent player
+        // checks for 3 in a row
         int numMarkers = 0;
         for (int position : positions) {\
             if (board->squares[position]->state == next) {
@@ -144,7 +134,6 @@ bool Window::checkLines(const QVector<int> &linesToCheck) {
             }
         }
         if (numMarkers == 3) {
-            // we found a winner!
             return true;
         }
 

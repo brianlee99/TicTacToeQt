@@ -11,9 +11,3 @@ int main(int argc, char *argv[])
 
     return a.exec();
 }
-
-// Planning:
-
-// window has a layout that consists of the board and some random buttons
-
-// the board consists of a gridlayout and 9 squares

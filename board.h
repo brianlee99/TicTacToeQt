@@ -11,20 +11,19 @@
 class Board : public QWidget
 {
     Q_OBJECT
+
+friend class Window;
+
 public:
     explicit Board(QWidget *parent = nullptr);
     ~Board();
-    QGridLayout *grid;
-    friend class Window;
     QVector<Square*> squares;
-    //QVector<QPushButton*> squares;
+
 private:
     int index(int x, int y);
 
-signals:
-
-public slots:
-
+protected:
+    void paintEvent(QPaintEvent *event);
 };
 
 #endif // BOARD_H

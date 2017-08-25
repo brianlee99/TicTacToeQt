@@ -9,25 +9,29 @@ class QHBoxLayout;
 class Square : public QWidget
 {
     Q_OBJECT
+
+friend class Window;
+friend class Board;
+
 public:
     explicit Square(int i, QWidget *parent = nullptr);
-    friend class Window;
-    friend class Board;
+
 signals:
     void click();
+
 protected:
-//    void paintEvent(QPaintEvent *e);
+    void paintEvent(QPaintEvent *);
 
 public slots:
     void mousePressEvent(QMouseEvent *);
-    void paintEvent(QPaintEvent *);
+
 private:
-    void setState(int next);
     int index;
     bool occupied;
     int state;
+    void setState(int next);
     void paintX(QPainter* painter);
-//    void paintO(QPainter* painter);
+    void paintO(QPainter* painter);
 };
 
 #endif // SQUARE_H
