@@ -19,6 +19,7 @@ private slots:
 private:
     Board* board;
     int next; // 0: O, 1: X
+    int turn;
     QLabel* label;
     bool finished;
 

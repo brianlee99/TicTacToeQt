@@ -10,7 +10,8 @@
 
 Window::Window(QWidget *parent) :
     QWidget(parent),
-    finished(0)
+    finished(0),
+    turn(1)
 {
     board = new Board(this);
 
@@ -46,6 +47,18 @@ void Window::handleClick(int i) {
             if (won) {
                 finished = true;
                 label->setText(currMarker + " wins");
+                return;
+            }
+
+            // Implement Draw -> we might have to implement a turn system
+            // it is incremented AFTER setting the square
+            // and if it is 10, we look for a draw
+
+            turn++;
+            if (turn == 10) {
+                // do stuff
+                finished = true;
+                label->setText("Draw!");
                 return;
             }
 
