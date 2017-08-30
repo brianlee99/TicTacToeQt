@@ -16,6 +16,7 @@ signals:
 
 private slots:
     void handleClick(int i);
+    void reset();
 private:
     Board* board;
     int next; // 0: O, 1: X

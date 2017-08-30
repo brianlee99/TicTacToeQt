@@ -15,11 +15,12 @@ Window::Window(QWidget *parent) :
 {
     board = new Board(this);
 
+
     // allocate 200 pixels to the right for menu
     setFixedSize(800, 600);
 
     label = new QLabel("Next player: X", this);
-    label->setGeometry(QRect(600,0,200,50));
+    label->setGeometry(QRect(625,0,125,50));
 
     // X always goes first
     next = 1;
@@ -31,6 +32,24 @@ Window::Window(QWidget *parent) :
         signalMapper->setMapping(board->squares[i], i);
     }
     connect (signalMapper, SIGNAL(mapped(int)), this, SLOT(handleClick(int)));
+
+    QPushButton* resetButton = new QPushButton(this);
+    resetButton->setGeometry(QRect(650,100, 100, 50));
+    resetButton->setText("Reset");
+    connect(resetButton, SIGNAL(clicked()), this, SLOT(reset()));
+
+}
+
+void Window::reset() {
+    turn = 1;
+    finished = false;
+    for (auto i = 0; i < 9; i++) {
+        Square* currentSquare = board->squares[i];
+        currentSquare->setState(-1);
+        currentSquare->occupied = false;
+    }
+    next = 1;
+    label->setText("Next player: X");
 }
 
 void Window::handleClick(int i) {
@@ -50,13 +69,8 @@ void Window::handleClick(int i) {
                 return;
             }
 
-            // Implement Draw -> we might have to implement a turn system
-            // it is incremented AFTER setting the square
-            // and if it is 10, we look for a draw
-
             turn++;
             if (turn == 10) {
-                // do stuff
                 finished = true;
                 label->setText("Draw!");
                 return;
