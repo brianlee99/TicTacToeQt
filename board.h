@@ -3,8 +3,6 @@
 
 #include <QWidget>
 #include <QVector>
-#include <QGridLayout>
-#include <QPushButton>
 
 #include "square.h"
 

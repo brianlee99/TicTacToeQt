@@ -3,9 +3,6 @@
 
 #include <QWidget>
 
-class QLabel;
-class QHBoxLayout;
-
 class Square : public QWidget
 {
     Q_OBJECT

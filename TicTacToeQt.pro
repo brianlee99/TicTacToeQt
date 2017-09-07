@@ -27,12 +27,14 @@ SOURCES += \
         main.cpp \
     board.cpp \
     square.cpp \
-    window.cpp
+    window.cpp \
+    ai.cpp
 
 HEADERS += \
     board.h \
     square.h \
-    window.h
+    window.h \
+    ai.h
 
 FORMS += \
         window.ui

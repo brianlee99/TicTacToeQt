@@ -1,10 +1,6 @@
 #include "square.h"
-#include <QLabel>
-#include <QGridLayout>
-#include <QHBoxLayout>
 #include <QPainter>
 #include <QPen>
-#include <QDebug>
 
 
 Square::Square(int i, QWidget *parent) :

@@ -1,7 +1,6 @@
 #include "board.h"
-#include <QDebug>
-
 #include <QPainter>
+#include <QGridLayout>
 
 Board::Board(QWidget *parent) :
     QWidget(parent),

@@ -1,12 +1,7 @@
 #include "window.h"
 
-//#include <QSignalMapper>
-//#include <QtDebug>
-//#include <QPainter>
-//#include <QPen>
-
-#include <QtCore>
-#include <QtGui>
+#include <QSignalMapper>
+#include <QPushButton>
 
 Window::Window(QWidget *parent) :
     QWidget(parent),
@@ -14,7 +9,6 @@ Window::Window(QWidget *parent) :
     turn(1)
 {
     board = new Board(this);
-
 
     // allocate 200 pixels to the right for menu
     setFixedSize(800, 600);
@@ -155,7 +149,7 @@ bool Window::checkLines(const QVector<int> &linesToCheck) {
 
         // checks for 3 in a row
         int numMarkers = 0;
-        for (int position : positions) {\
+        for (int position : positions) {
             if (board->squares[position]->state == next) {
                 numMarkers++;
             }
