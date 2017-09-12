@@ -25,15 +25,17 @@ Board::~Board() {
     }
 }
 
-int Board::index(int x, int y) {
-    return x + 3 * y;
-}
+
+//int Board::index(int x, int y) {
+//    return x + 3 * y;
+//}
 
 void Board::paintEvent(QPaintEvent *event) {
     // draw the grid
     QPainter painter(this);
     QPen pen;
-    pen.setWidth(3);
+    int penWidth = 3;
+    pen.setWidth(penWidth);
     painter.setPen(pen);
 
     painter.drawLine(0, 0, 600, 0);

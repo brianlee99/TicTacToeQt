@@ -18,7 +18,7 @@ public:
     QVector<Square*> squares;
 
 private:
-    int index(int x, int y);
+//    int index(int x, int y);
 
 protected:
     void paintEvent(QPaintEvent *event);

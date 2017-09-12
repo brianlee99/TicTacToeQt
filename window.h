@@ -3,8 +3,10 @@
 
 #include <QWidget>
 #include <QLabel>
-#include "board.h"
 #include <QMap>
+#include <QRadioButton>
+#include <QGroupBox>
+#include "board.h"
 
 class Window : public QWidget
 {
@@ -18,16 +20,27 @@ private slots:
     void handleClick(int i);
     void reset();
 private:
+    QRadioButton* onePlayerRadioButton;
+    QRadioButton* twoPlayerRadioButton;
+    QRadioButton* playAsXRadioButton;
+    QRadioButton* playAsORadioButton;
+
+    QGroupBox* selectNumberPlayersGroupBox;
+    QGroupBox* selectPlayerMarkerGroupBox;
+
     Board* board;
-    int next; // 0: O, 1: X
+
+    int next;           // 0: O, 1: X
     int turn;
-    QLabel* label;
+    QLabel* nextPlayerLabel;
     bool finished;
+    int playerMode;     // 1: 1-player, 2: 2-player
+    int playerMarker;   // same as "next", but only applicable if one-player mode
 
     bool checkForWin(int i);
     bool checkLines(const QVector<int> &linesToCheck);
-
     void handlePaint(int i, int marker);
+    void setNextPlayerLabel();
 
 };
 

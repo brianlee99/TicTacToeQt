@@ -2,22 +2,28 @@
 
 #include <QSignalMapper>
 #include <QPushButton>
+#include <QRadioButton>
+#include <QVBoxLayout>
+
+#include <QDebug>
 
 Window::Window(QWidget *parent) :
     QWidget(parent),
     finished(0),
-    turn(1)
+    turn(1),
+    next(1),        // x always goes first
+    playerMode(2),
+    playerMarker(-1),
+    board(new Board(this))
 {
-    board = new Board(this);
 
     // allocate 200 pixels to the right for menu
     setFixedSize(800, 600);
 
-    label = new QLabel("Next player: X", this);
-    label->setGeometry(QRect(625,0,125,50));
+    nextPlayerLabel = new QLabel(this);
+    setNextPlayerLabel();
+    nextPlayerLabel->setGeometry(QRect(625,0,125,50));
 
-    // X always goes first
-    next = 1;
 
     // initialize signal mapping
     QSignalMapper* signalMapper = new QSignalMapper(this);
@@ -27,23 +33,94 @@ Window::Window(QWidget *parent) :
     }
     connect (signalMapper, SIGNAL(mapped(int)), this, SLOT(handleClick(int)));
 
+    // Initialize and set up reset button
     QPushButton* resetButton = new QPushButton(this);
-    resetButton->setGeometry(QRect(650,100, 100, 50));
+    resetButton->setGeometry(QRect(650, 300, 100, 50));
     resetButton->setText("Reset");
     connect(resetButton, SIGNAL(clicked()), this, SLOT(reset()));
+
+    // Initialize radio buttons for 1 or 2 player mode
+    onePlayerRadioButton = new QRadioButton(this);
+    twoPlayerRadioButton = new QRadioButton(this);
+
+//    onePlayerRadioButton->setGeometry(QRect(650, 100, 100, 50));
+    onePlayerRadioButton->setText("1-Player");
+//    twoPlayerRadioButton->setGeometry(QRect(650, 150, 100, 50));
+    twoPlayerRadioButton->setText("2-Player");
+    // default is two player mode
+    twoPlayerRadioButton->setChecked(true);
+
+    playAsXRadioButton = new QRadioButton(this);
+    playAsORadioButton = new QRadioButton(this);
+
+    playAsXRadioButton->setGeometry(QRect(650, 200, 100, 50));
+    playAsXRadioButton->setText("Play as X");
+    playAsORadioButton->setGeometry(QRect(650, 250, 100, 50));
+    playAsORadioButton->setText("Play As O");
+
+    playAsXRadioButton->setChecked(true);
+
+    // TODO : connect this with the "Selected one player radio button thingy
+    playAsORadioButton->setEnabled(false);
+    playAsXRadioButton->setEnabled(false);
+
+    selectNumberPlayersGroupBox = new QGroupBox(this);
+    QVBoxLayout *vbox1 = new QVBoxLayout;
+    vbox1->addWidget(onePlayerRadioButton);
+    vbox1->addWidget(twoPlayerRadioButton);
+    selectNumberPlayersGroupBox->setLayout(vbox1);
+    selectNumberPlayersGroupBox->setGeometry(QRect(650, 100, 100, 100));
+
+    selectPlayerMarkerGroupBox = new QGroupBox(this);
+    QVBoxLayout *vbox2 = new QVBoxLayout;
+    vbox2->addWidget(playAsXRadioButton);
+    vbox2->addWidget(playAsORadioButton);
+    selectPlayerMarkerGroupBox->setLayout(vbox2);
+    selectPlayerMarkerGroupBox->setGeometry(QRect(650, 200, 100, 100));
+
+
+
+
+
+
+
+
+
+
+    // need a signal for if 1-player is selected then turn on play as X, play as O
+    // the # players and the X/O thing should be independent "forms"
+    //
 
 }
 
 void Window::reset() {
     turn = 1;
     finished = false;
+    next = 1;
+
+    if (onePlayerRadioButton->isChecked()) {
+        playerMode = 1;
+        if (playAsXRadioButton->isChecked()) {
+            playerMarker = 1;
+        } else if (playAsORadioButton->isChecked()) {
+            playerMarker = 0;
+        }
+        qInfo() << "One Player Mode activated";
+    } else if (twoPlayerRadioButton->isChecked()) {
+        playerMode = 2;
+        qInfo() << "Two Player Mode activated";
+    }
+
+
+
+    // clear the board
     for (auto i = 0; i < 9; i++) {
         Square* currentSquare = board->squares[i];
         currentSquare->setState(-1);
         currentSquare->occupied = false;
     }
-    next = 1;
-    label->setText("Next player: X");
+
+    setNextPlayerLabel();
 }
 
 void Window::handleClick(int i) {
@@ -59,20 +136,19 @@ void Window::handleClick(int i) {
             bool won = checkForWin(i);
             if (won) {
                 finished = true;
-                label->setText(currMarker + " wins");
+                nextPlayerLabel->setText(currMarker + " wins");
                 return;
             }
 
             turn++;
             if (turn == 10) {
                 finished = true;
-                label->setText("Draw!");
+                nextPlayerLabel->setText("Draw!");
                 return;
             }
 
             next = !next;
-            QString nextText = "Next player: " + nextMarker;
-            label->setText(nextText);
+            setNextPlayerLabel();
         }
     }
 }
@@ -80,7 +156,6 @@ void Window::handleClick(int i) {
 
 
 bool Window::checkForWin(int i) {
-    bool foundWin = false;
     QVector<int> linesToCheck;
     switch (i) {
         case 0:
@@ -112,8 +187,7 @@ bool Window::checkForWin(int i) {
             break;
     }
 
-    foundWin = checkLines(linesToCheck);
-    return foundWin;
+    return checkLines(linesToCheck);
 }
 
 bool Window::checkLines(const QVector<int> &linesToCheck) {
@@ -160,6 +234,14 @@ bool Window::checkLines(const QVector<int> &linesToCheck) {
 
     }
     return false;
+}
+
+// function prototype for setting the label
+// instead of building the string straight up, actually read the "next" parameter.
+
+void Window::setNextPlayerLabel() {
+    QString nextPlayerString = next ? "Next player: X" : "Next player: O";
+    nextPlayerLabel->setText(nextPlayerString);
 }
 
 

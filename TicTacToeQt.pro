@@ -36,5 +36,4 @@ HEADERS += \
     window.h \
     ai.h
 
-FORMS += \
-        window.ui
+FORMS +=
