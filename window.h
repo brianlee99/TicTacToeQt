@@ -37,6 +37,10 @@ private:
     int playerMode;     // 1: 1-player, 2: 2-player
     int playerMarker;   // same as "next", but only applicable if one-player mode
 
+    void togglePlayerMode(bool b);
+    int aiPlaceMarker();
+    void resolveTurn();
+
     bool checkForWin(int i);
     bool checkLines(const QVector<int> &linesToCheck);
     void handlePaint(int i, int marker);

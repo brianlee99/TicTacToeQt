@@ -48,7 +48,7 @@ Window::Window(QWidget *parent) :
 //    twoPlayerRadioButton->setGeometry(QRect(650, 150, 100, 50));
     twoPlayerRadioButton->setText("2-Player");
     // default is two player mode
-    twoPlayerRadioButton->setChecked(true);
+
 
     playAsXRadioButton = new QRadioButton(this);
     playAsORadioButton = new QRadioButton(this);
@@ -58,11 +58,6 @@ Window::Window(QWidget *parent) :
     playAsORadioButton->setGeometry(QRect(650, 250, 100, 50));
     playAsORadioButton->setText("Play As O");
 
-    playAsXRadioButton->setChecked(true);
-
-    // TODO : connect this with the "Selected one player radio button thingy
-    playAsORadioButton->setEnabled(false);
-    playAsXRadioButton->setEnabled(false);
 
     selectNumberPlayersGroupBox = new QGroupBox(this);
     QVBoxLayout *vbox1 = new QVBoxLayout;
@@ -79,18 +74,24 @@ Window::Window(QWidget *parent) :
     selectPlayerMarkerGroupBox->setGeometry(QRect(650, 200, 100, 100));
 
 
+    twoPlayerRadioButton->setChecked(true);
+    playAsXRadioButton->setChecked(true);
 
+    selectPlayerMarkerGroupBox->setEnabled(false);
 
+    connect(onePlayerRadioButton, &QRadioButton::toggled, this, &Window::togglePlayerMode);
 
+    if (playerMode == 1)
+        resolveTurn();
 
+}
 
-
-
-
-    // need a signal for if 1-player is selected then turn on play as X, play as O
-    // the # players and the X/O thing should be independent "forms"
-    //
-
+void Window::togglePlayerMode(bool b) {
+    if (onePlayerRadioButton->isChecked()) {
+        selectPlayerMarkerGroupBox->setEnabled(true);
+    } else if (twoPlayerRadioButton->isChecked()) {
+        selectPlayerMarkerGroupBox->setEnabled(false);
+    }
 }
 
 void Window::reset() {
@@ -102,16 +103,18 @@ void Window::reset() {
         playerMode = 1;
         if (playAsXRadioButton->isChecked()) {
             playerMarker = 1;
+            qInfo() << "Here we go !";
         } else if (playAsORadioButton->isChecked()) {
             playerMarker = 0;
+            qInfo() << "See ya later, X!";
         }
         qInfo() << "One Player Mode activated";
     } else if (twoPlayerRadioButton->isChecked()) {
         playerMode = 2;
+        // playerMarker not being used
+        playerMarker = -1;
         qInfo() << "Two Player Mode activated";
     }
-
-
 
     // clear the board
     for (auto i = 0; i < 9; i++) {
@@ -121,34 +124,116 @@ void Window::reset() {
     }
 
     setNextPlayerLabel();
+
+
+    if (playerMode == 1)
+        resolveTurn();
 }
 
+void Window::resolveTurn() {
+    bool aiTurn = ((turn % 2 == 0) && (playerMarker == 1)) ||
+                  ((turn % 2 == 1) && (playerMarker == 0));
+
+    if (aiTurn) {
+        int i = aiPlaceMarker(); // i <- index of chosen square
+
+        bool won = checkForWin(i);
+        if (won) {
+            finished = true;
+            QString aiMarker = playerMarker ? "O" : "X";
+            nextPlayerLabel->setText(aiMarker + " wins");
+            return;
+        }
+
+        turn++;
+        if (turn == 10) {
+            finished = true;
+            nextPlayerLabel->setText("Draw!");
+            return;
+        }
+
+        next = !next;
+        setNextPlayerLabel();
+    }
+}
+
+int Window::aiPlaceMarker() {
+
+    QString aiMarker = playerMarker ? "O" : "X";
+    int aiMarkerAsInt = playerMarker ? 0 : 1;
+    Square* chosenSquare;
+    int i;
+    for (i = 0; i < 9; i++) {
+        if (!board->squares[i]->occupied) {
+            chosenSquare = board->squares[i];
+            break;
+        }
+    }
+    chosenSquare->setState(aiMarkerAsInt);
+    chosenSquare->update();
+    return i;
+}
+
+// places a marker at position i (if possible), for the player.
+// also does checks for whether a win or draw has occurred.
 void Window::handleClick(int i) {
-    if (!finished) {
-        QString currMarker = next ? "X" : "O";
-        QString nextMarker = next ? "O" : "X";
-        Square* currentSquare = board->squares[i];
-        // check that the clicked square is unoccupied
-        if (!currentSquare->occupied) {
-            currentSquare->setState(next);
-            currentSquare->update();
+    if (playerMode == 2) {
+        if (!finished) {
 
-            bool won = checkForWin(i);
-            if (won) {
-                finished = true;
-                nextPlayerLabel->setText(currMarker + " wins");
-                return;
+            QString currMarker = next ? "X" : "O";
+            QString nextMarker = next ? "O" : "X";
+            Square* currentSquare = board->squares[i];
+
+            if (!currentSquare->occupied) {
+                currentSquare->setState(next);
+                currentSquare->update();
+
+                bool won = checkForWin(i);
+                if (won) {
+                    finished = true;
+                    nextPlayerLabel->setText(currMarker + " wins");
+                    return;
+                }
+
+                turn++;
+                if (turn == 10) {
+                    finished = true;
+                    nextPlayerLabel->setText("Draw!");
+                    return;
+                }
+
+                next = !next;
+                setNextPlayerLabel();
             }
+        }
+    } else if (playerMode == 1) {
+        if (!finished) {
 
-            turn++;
-            if (turn == 10) {
-                finished = true;
-                nextPlayerLabel->setText("Draw!");
-                return;
+            QString currMarker = playerMarker ? "X" : "O";
+            Square* currentSquare = board->squares[i];
+
+            if (!currentSquare->occupied) {
+                currentSquare->setState(playerMarker);
+                currentSquare->update();
+
+                bool won = checkForWin(i);
+                if (won) {
+                    finished = true;
+                    nextPlayerLabel->setText(currMarker + " wins");
+                    return;
+                }
+
+                turn++;
+                if (turn == 10) {
+                    finished = true;
+                    nextPlayerLabel->setText("Draw!");
+                    return;
+                }
+
+                next = !next;
+                setNextPlayerLabel();
+                resolveTurn();
             }
-
-            next = !next;
-            setNextPlayerLabel();
         }
     }
 }
