@@ -1,5 +1,5 @@
 # TicTacToeQt
-TicTacToeQt is a simple game in C++ using the Qt framework and uses features like QPainter, Signals/Slots, and QLayouts. Combined with the high performance of C++, Qt is an ideal choice for designing desktop games. It even supports OpenGL (which I have not taken advantage of, but perhaps will in the future).
+TicTacToeQt is a simple game in C++ using the Qt framework features like QPainter, Signals/Slots, and QLayouts. Combined with the high performance of C++, Qt is an ideal choice for designing desktop games. It even supports OpenGL (which I have not taken advantage of, but perhaps will in the future).
 
 TicTacToeQT currently comes (as default) two-player mode where X always goes first. I will implement a one-player mode with a rational AI to play against in the very near future! (It's already been sort of done in the non-qt version, but I have to migrate the code over to the Qt version.)
 
